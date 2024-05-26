@@ -3,8 +3,6 @@ import network
 from machine import Pin
 from WIFI_CREDENTIALS import SSID,PASS
 
-led = Pin("LED", Pin.OUT)
-
 # Connect to WiFi
 def connect_wifi(ssid, password):
     wlan = network.WLAN(network.STA_IF)
@@ -16,10 +14,24 @@ def connect_wifi(ssid, password):
             pass
     print('Connected to WiFi:', wlan.ifconfig())
 
-# Handle incoming HTTP requests
-async def handle_request(reader, writer):
+# Dictionary to store URL handlers
+url_handlers = {}
+
+# Decorator to register URL handlers
+def route(url):
+    def decorator(func):
+        url_handlers[url] = func
+        return func
+    return decorator
+
+# Dispatch incoming HTTP requests to the appropriate handler
+async def dispatch_request(reader, writer):
     print('Received request from:', writer.get_extra_info('peername'))
-    led.toggle() 
+
+    # Read the first line of the request
+    line = await reader.readline()
+    line = line.decode().strip()
+    method, url, version = line.split()
 
     # Read the entire request
     while True:
@@ -29,10 +41,14 @@ async def handle_request(reader, writer):
             break
         print('Received header:', line)
 
-    # Send the response
-    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nHello, World!\r\n'
-    await writer.awrite(response)
-    await writer.aclose()
+    # Call the appropriate handler function
+    if url in url_handlers:
+        await url_handlers[url](reader, writer)
+    else:
+        # Send a 404 response if no handler is found
+        response = b'HTTP/1.0 404 Not Found\r\n\r\n'
+        await writer.awrite(response)
+        await writer.aclose()
 
 # Start the async REST API server
 async def main():
@@ -40,7 +56,7 @@ async def main():
     connect_wifi(SSID, PASS)
     
     # Start server
-    server = await asyncio.start_server(handle_request, '0.0.0.0', 80)
+    server = await asyncio.start_server(dispatch_request, '0.0.0.0', 80)
 
     print('Server listening on IP: 0.0.0.0')
     print('Server listening on port: 80')
@@ -48,5 +64,19 @@ async def main():
     async with server:
         await server.wait_closed()
 
+# Example usage:
+@route('/hello')
+async def hello_handler(reader, writer):
+    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nHello, World!\r\n'
+    await writer.awrite(response)
+    await writer.aclose()
+
+# Example usage:
+@route('/dennis')
+async def dennis_handler(reader, writer):
+    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nDennis\r\n'
+    await writer.awrite(response)
+    await writer.aclose()
+    
 # Run the event loop
 asyncio.run(main())
