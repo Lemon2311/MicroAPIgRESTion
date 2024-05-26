@@ -31,7 +31,7 @@ async def handle_request(reader, writer):
 # Start the async REST API server
 async def main():
     # Connect to WiFi
-    connect_wifi("DIGI-y6cQ", "D2E2PyEhkT")
+    connect_wifi("SSID", "PASS")
     
     # Start server
     server = await asyncio.start_server(handle_request, '0.0.0.0', 80)
