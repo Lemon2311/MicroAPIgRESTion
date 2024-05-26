@@ -1,5 +1,8 @@
 import uasyncio as asyncio
 import network
+from machine import Pin
+
+led = Pin("LED", Pin.OUT)
 
 # Connect to WiFi
 def connect_wifi(ssid, password):
@@ -15,16 +18,18 @@ def connect_wifi(ssid, password):
 # Handle incoming HTTP requests
 async def handle_request(reader, writer):
     print('Received request from:', writer.get_extra_info('peername'))
+    led.toggle() 
 
-    try:
-        # Read the request with a timeout of 5 seconds
-        request = await asyncio.wait_for(reader.read(), timeout=3)
-        print('Request received:', request)
-    except asyncio.TimeoutError:
-        print('Timeout reading request')
-    
+    # Read the entire request
+    while True:
+        line = await reader.readline()
+        line = line.decode().strip()
+        if line == '':
+            break
+        print('Received header:', line)
+
     # Send the response
-    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nHello, World!'
+    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nHello, World!\r\n'
     await writer.awrite(response)
     await writer.aclose()
 
