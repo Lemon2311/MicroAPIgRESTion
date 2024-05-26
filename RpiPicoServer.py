@@ -17,11 +17,22 @@ def connect_wifi(ssid, password):
 # Dictionary to store URL handlers
 url_handlers = {}
 
-# Decorator to register URL handlers
 def route(url):
-    def decorator(func):
-        url_handlers[url] = func
-        return func
+    def decorator(handler):
+        async def wrapper(reader, writer):
+            # Call the handler function to generate the response
+            response = await handler()
+
+            # Write the response
+            response = f'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n{response}\r\n'
+            await writer.awrite(response.encode())
+
+            # Close the connection
+            await writer.aclose()
+
+        # Register the wrapper function instead of the handler function
+        url_handlers[url] = wrapper
+        return handler
     return decorator
 
 # Dispatch incoming HTTP requests to the appropriate handler
@@ -66,17 +77,12 @@ async def main():
 
 # Example usage:
 @route('/hello')
-async def hello_handler(reader, writer):
-    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nHello, World!\r\n'
-    await writer.awrite(response)
-    await writer.aclose()
+async def hello_handler():
+    return 'Hello, World!'
 
-# Example usage:
 @route('/dennis')
-async def dennis_handler(reader, writer):
-    response = b'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\nDennis\r\n'
-    await writer.awrite(response)
-    await writer.aclose()
+async def dennis_handler():
+    return 'Dennis'
     
 # Run the event loop
 asyncio.run(main())
