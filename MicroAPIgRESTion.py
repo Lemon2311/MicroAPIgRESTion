@@ -54,20 +54,20 @@ def route(url, method='GET', *query_params):
         return handler
     return decorator
 
-# def GET(url):
-#     return route(url, 'GET')
+def GET(url, *query_params):
+    return route(url, 'GET', *query_params)
 
-# def POST(url):
-#     return route(url, 'POST')
+def POST(url, *query_params):
+    return route(url, 'POST', *query_params)
 
-# def PUT(url):
-#     return route(url, 'PUT')
+def PUT(url, *query_params):
+    return route(url, 'PUT', *query_params)
 
-# def DELETE(url):
-#     return route(url, 'DELETE')
+def DELETE(url, *query_params):
+    return route(url, 'DELETE', *query_params)
 
-# def PATCH(url):
-#     return route(url, 'PATCH')
+def PATCH(url, *query_params):
+    return route(url, 'PATCH', *query_params)
 
 # Dispatch incoming HTTP requests to the appropriate handler
 async def dispatch_request(reader, writer):
