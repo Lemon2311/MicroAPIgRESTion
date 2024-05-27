@@ -88,13 +88,3 @@ async def main():
 
     async with server:
         await server.wait_closed()
-
-# Example usage:
-@route('/hello')
-async def hello_handler(**query_params):
-    name = query_params.get('name', 'Anonymous')
-    id = query_params.get('id', 'Unknown')
-    return f'Hello, {name}! Your ID is {id}.'
-
-# Run the event loop
-asyncio.run(main())
