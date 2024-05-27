@@ -73,7 +73,9 @@ asyncio.run(main())
 will start the Async Rest Api, being able to handle requests at routes defined previously.
 
 A more comprehensive example of use would be:
-
+```
+example.py
+```
 ```python
 from MicroAPIgRESTion import *
 
