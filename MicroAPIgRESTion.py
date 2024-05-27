@@ -19,10 +19,9 @@ url_handlers = {}
 
 def parse_query_params(query_string):
     query_params = {}
-    if query_string:
-        pairs = query_string.split('&')
-        for pair in pairs:
-            key, value = pair.split('=')
+    for param in query_string.split('&'):
+        if '=' in param:
+            key, value = param.split('=', 1)
             query_params[key] = value
     return query_params
 
