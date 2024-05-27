@@ -12,7 +12,13 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 ## Usage
 
 To get started, save `MicroAPIgRESTion.py` onto the device and create a `WIFI_CREDENTIALS.py` file following the pattern/structure from `WIFI_CREDENTIALS(example).py`, then save it on the device.
-
+```
+WIFI_CREDENTIALS.py
+```
+```python
+SSID = "SSID"
+PASS = "PASS"
+```
 Begin by importing the library:
 
 ```python
