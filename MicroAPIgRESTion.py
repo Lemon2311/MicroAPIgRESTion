@@ -26,14 +26,22 @@ def parse_query_params(query_string):
             query_params[key] = value
     return query_params
 
-def route(url, method='GET'):
+def route(url, method='GET', *query_params):
     def decorator(handler):
         async def wrapper(request_url, reader, writer):
             # Parse query parameters
-            query_params = parse_query_params(request_url.split('?', 1)[-1])
+            query_params_dict = parse_query_params(request_url.split('?', 1)[-1])
 
-            # Call the handler function with query parameters
-            response = await handler(**query_params)
+            # Check if the required query parameters are present
+            if all(param in query_params_dict for param in query_params):
+                # Call the handler function with query parameters
+                response = await handler(**query_params_dict)
+            else:
+                # Send a 400 response if required query parameters are missing
+                response = 'HTTP/1.0 400 Bad Request\r\nContent-Type: text/html\r\n\r\nMissing query parameters\r\n'
+                await writer.awrite(response.encode())
+                await writer.aclose()
+                return
 
             # Write the response
             response = f'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n{response}\r\n'
@@ -43,24 +51,24 @@ def route(url, method='GET'):
             await writer.aclose()
 
         # Register the wrapper function instead of the handler function
-        url_handlers[(url, method)] = wrapper
+        url_handlers[(url, method, query_params)] = wrapper
         return handler
     return decorator
 
-def GET(url):
-    return route(url, 'GET')
+# def GET(url):
+#     return route(url, 'GET')
 
-def POST(url):
-        return route(url, 'POST')
+# def POST(url):
+#     return route(url, 'POST')
 
-def PUT(url):
-        return route(url, 'PUT')
+# def PUT(url):
+#     return route(url, 'PUT')
 
-def DELETE(url):
-        return route(url, 'DELETE')
+# def DELETE(url):
+#     return route(url, 'DELETE')
 
-def PATCH(url):
-        return route(url, 'PATCH')
+# def PATCH(url):
+#     return route(url, 'PATCH')
 
 # Dispatch incoming HTTP requests to the appropriate handler
 async def dispatch_request(reader, writer):
@@ -82,16 +90,19 @@ async def dispatch_request(reader, writer):
     # Extract the path (without query string) from the URL
     path = url.split('?', 1)[0]
 
-    print('path:',path,', method:',method)
+    # Parse query parameters
+    query_params = parse_query_params(url.split('?', 1)[-1])
 
     # Call the appropriate handler function
-    if (path, method) in url_handlers:
-        await url_handlers[(path, method)](url, reader, writer)
-    else:
-        # Send a 404 response if no handler is found
-        response = b'HTTP/1.0 404 Not Found\r\n\r\n'
-        await writer.awrite(response)
-        await writer.aclose()
+    for key in url_handlers:
+        if key[0] == path and key[1] == method and all(param in query_params for param in key[2]):
+            await url_handlers[key](url, reader, writer)
+            return
+
+    # Send a 404 response if no handler is found
+    response = b'HTTP/1.0 404 Not Found\r\n\r\n'
+    await writer.awrite(response)
+    await writer.aclose()
 
 # Start the async REST API server
 async def main():
