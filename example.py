@@ -13,15 +13,19 @@ async def nips_handler(**query_params):
     nrOfNips = query_params.get('nrOfNips', 'Unknown')
     return f'{email},{nrOfNips}'
 
-@route('/car')
+# @route can be used for any method and if the method is not specified it will default to GET
+@route('/pin','OPTIONS')
 async def car_handler(**query_params):
-    series = query_params.get('series', 'Anonymous')
-    model = query_params.get('model', 'Unknown')
-    return f'{model},{series}'
+    return 'Do some options or smthn'
 
-@route('/pin')
+# this is basically route('/pin','GET')
+@GET('/pin')
 async def car_handler(**query_params):
     value = query_params.get('value', '0V')
     return f'{value}'
+
+@POST('/pin')
+async def car_handler(**query_params):
+    return 'Pin posting like settig a pin state'
 
 asyncio.run(main())
