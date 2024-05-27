@@ -17,11 +17,23 @@ def connect_wifi(ssid, password):
 # Dictionary to store URL handlers
 url_handlers = {}
 
+def parse_query_params(query_string):
+    query_params = {}
+    if query_string:
+        pairs = query_string.split('&')
+        for pair in pairs:
+            key, value = pair.split('=')
+            query_params[key] = value
+    return query_params
+
 def route(url):
     def decorator(handler):
         async def wrapper(request_url, reader, writer):
-            # Call the handler function to generate the response
-            response = await handler(request_url)
+            # Parse query parameters
+            query_params = parse_query_params(request_url.split('?', 1)[-1])
+
+            # Call the handler function with query parameters
+            response = await handler(**query_params)
 
             # Write the response
             response = f'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n{response}\r\n'
@@ -79,12 +91,10 @@ async def main():
 
 # Example usage:
 @route('/hello')
-async def hello_handler(request_url):
-    return f'Hello, World! This is for URL: {request_url}'
-
-@route('/hello')
-async def another_hello_handler(request_url):
-    return f'Hello from another handler! This is for URL: {request_url}'
+async def hello_handler(**query_params):
+    name = query_params.get('name', 'Anonymous')
+    id = query_params.get('id', 'Unknown')
+    return f'Hello, {name}! Your ID is {id}.'
 
 # Run the event loop
 asyncio.run(main())
