@@ -44,7 +44,7 @@ async def greet_handler(first_name, last_name):
     return f'Hello, {first_name} {last_name}!'
 ```
 
-In this example, `/hello` is the `url`, `GET` is the `method`, and `first_name` & `last_name` are the `queryParams`. The `queryParams` should also be included as parameters for the handler function.
+In this example, `/hello` is the `url`, `GET` is the `method`, and `first_name` & `last_name` are the `queryParams`. The `queryParams` need to also be included as parameters for the handler function.
 
 You can also use the `@GET`, `@POST`, `@PUT`, `@DELETE`, `@PATCH` decorators for routing:
 
