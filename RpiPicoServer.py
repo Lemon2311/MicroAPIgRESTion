@@ -1,7 +1,7 @@
 import uasyncio as asyncio
 import network
 from machine import Pin
-from WIFI_CREDENTIALS import SSID,PASS
+from WIFI_CREDENTIALS import SSID, PASS
 
 # Connect to WiFi
 def connect_wifi(ssid, password):
@@ -19,9 +19,9 @@ url_handlers = {}
 
 def route(url):
     def decorator(handler):
-        async def wrapper(reader, writer):
+        async def wrapper(request_url, reader, writer):
             # Call the handler function to generate the response
-            response = await handler()
+            response = await handler(request_url)
 
             # Write the response
             response = f'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n{response}\r\n'
@@ -53,13 +53,15 @@ async def dispatch_request(reader, writer):
         print('Received header:', line)
 
     # Call the appropriate handler function
-    if url in url_handlers:
-        await url_handlers[url](reader, writer)
-    else:
-        # Send a 404 response if no handler is found
-        response = b'HTTP/1.0 404 Not Found\r\n\r\n'
-        await writer.awrite(response)
-        await writer.aclose()
+    for handler_url, handler in url_handlers.items():
+        if url.startswith(handler_url):
+            await handler(url, reader, writer)
+            return
+
+    # Send a 404 response if no handler is found
+    response = b'HTTP/1.0 404 Not Found\r\n\r\n'
+    await writer.awrite(response)
+    await writer.aclose()
 
 # Start the async REST API server
 async def main():
@@ -77,12 +79,12 @@ async def main():
 
 # Example usage:
 @route('/hello')
-async def hello_handler():
-    return 'Hello, World!'
+async def hello_handler(request_url):
+    return f'Hello, World! This is for URL: {request_url}'
 
-@route('/dennis')
-async def dennis_handler():
-    return 'Dennis'
-    
+@route('/hello')
+async def another_hello_handler(request_url):
+    return f'Hello from another handler! This is for URL: {request_url}'
+
 # Run the event loop
 asyncio.run(main())
