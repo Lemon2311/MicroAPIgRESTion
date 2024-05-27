@@ -26,7 +26,7 @@ def parse_query_params(query_string):
             query_params[key] = value
     return query_params
 
-def route(url):
+def route(url, method='GET'):
     def decorator(handler):
         async def wrapper(request_url, reader, writer):
             # Parse query parameters
@@ -43,9 +43,24 @@ def route(url):
             await writer.aclose()
 
         # Register the wrapper function instead of the handler function
-        url_handlers[url] = wrapper
+        url_handlers[(url, method)] = wrapper
         return handler
     return decorator
+
+def GET(url):
+    return route(url, 'GET')
+
+def POST(url):
+        return route(url, 'POST')
+
+def PUT(url):
+        return route(url, 'PUT')
+
+def DELETE(url):
+        return route(url, 'DELETE')
+
+def PATCH(url):
+        return route(url, 'PATCH')
 
 # Dispatch incoming HTTP requests to the appropriate handler
 async def dispatch_request(reader, writer):
@@ -64,16 +79,19 @@ async def dispatch_request(reader, writer):
             break
         print('Received header:', line)
 
-    # Call the appropriate handler function
-    for handler_url, handler in url_handlers.items():
-        if url.startswith(handler_url):
-            await handler(url, reader, writer)
-            return
+    # Extract the path (without query string) from the URL
+    path = url.split('?', 1)[0]
 
-    # Send a 404 response if no handler is found
-    response = b'HTTP/1.0 404 Not Found\r\n\r\n'
-    await writer.awrite(response)
-    await writer.aclose()
+    print('path:',path,', method:',method)
+
+    # Call the appropriate handler function
+    if (path, method) in url_handlers:
+        await url_handlers[(path, method)](url, reader, writer)
+    else:
+        # Send a 404 response if no handler is found
+        response = b'HTTP/1.0 404 Not Found\r\n\r\n'
+        await writer.awrite(response)
+        await writer.aclose()
 
 # Start the async REST API server
 async def main():
