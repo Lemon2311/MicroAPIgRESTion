@@ -12,7 +12,13 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 ## Usage
 
 To get started, save `MicroAPIgRESTion.py` onto the device and create a `WIFI_CREDENTIALS.py` file following the pattern/structure from `WIFI_CREDENTIALS(example).py`, then save it on the device.
-
+```
+WIFI_CREDENTIALS.py
+```
+```python
+SSID = "SSID"
+PASS = "PASS"
+```
 Begin by importing the library:
 
 ```python
@@ -38,7 +44,7 @@ async def greet_handler(first_name, last_name):
     return f'Hello, {first_name} {last_name}!'
 ```
 
-In this example, `/hello` is the `url`, `GET` is the `method`, and `first_name` & `last_name` are the `queryParams`. The `queryParams` should also be included as parameters for the handler function.
+In this example, `/hello` is the `url`, `GET` is the `method`, and `first_name` & `last_name` are the `queryParams`. The `queryParams` need to also be included as parameters for the handler function.
 
 You can also use the `@GET`, `@POST`, `@PUT`, `@DELETE`, `@PATCH` decorators for routing:
 
@@ -67,7 +73,9 @@ asyncio.run(main())
 will start the Async Rest Api, being able to handle requests at routes defined previously.
 
 A more comprehensive example of use would be:
-
+```
+example.py
+```
 ```python
 from MicroAPIgRESTion import *
 
