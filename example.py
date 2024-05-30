@@ -1,10 +1,14 @@
+# import lib
 from MicroAPIgRESTion import *
+# importing Pin for use in future handler
 from machine import Pin
 
+# basic example
 @GET('/nips', 'email', 'nrOfNips')
 async def nips_handler(email, nrOfNips):
     return f'{email}, {nrOfNips}'
 
+# using device pins
 @POST('/initializeDigitalPin', 'pin', 'mode')
 async def digitalPin_init_handler(pin, mode):
     
@@ -33,13 +37,10 @@ async def digitalPin_out_handler(pin, state):
     
     return f"Pin nr.{pin} set to {state}"
 
-@route('/hello', 'GET', 'name')
-async def hello_handler(name):
-    return f'Hello, {name}!'
-
-@route('/hello', 'GET', 'first_name', 'last_name')
-async def greet_handler(first_name, last_name):
-    return f'Hello, {first_name} {last_name}!'
+# HTML website serving
+@GET('/index0', 'name')
+async def handler(name):
+    return html_content('index.html', params={'name': name})
 
 @GET('/index', 'name')
 async def index_handler(name):
@@ -59,16 +60,19 @@ async def index_handler(name):
 </html>
 """
 
-@GET('/index0', 'name')
-async def handler(name):
-    return html_content('index.html', params={'name': name})
+# different handlers based on query parameters
+@route('/hello', 'GET', 'name')
+async def hello_handler(name):
+    return f'Hello, {name}!'
 
 @route('/hello')
 async def greet_handler():
     return 'Hello!'
 
+# other http methods handling
 @route('/options', 'OPTIONS')
 async def options_handler():
     return 'Do some options or smthn'
 
+# Running server
 asyncio.run(main())
