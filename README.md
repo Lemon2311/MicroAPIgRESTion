@@ -74,13 +74,27 @@ async def index_handler(name):
 </html>
 """
 ```
-or
+Or by using a separate html file by, returning the html_content function and passing as arguments the path of the html file and the query parameters like so:
 ```python
 @GET('/index0', 'name')
 async def handler(name):
-    return html_content('index.html', 'style.css', 'script.js', params={'name': name})
+    return html_content('index.html', params={'name': name})
 ```
-
+**When using the html_content function:**
+ - Using css and js is following the usual way by linking the css file and the script file inside the html file like so:
+```html
+<head>
+    <title>Hello, {name}`s World!</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="script.js"></script>
+</head>
+```
+ - query parameters can be used by using {param} inside any of the html, css, js files like so:
+```html
+<title>Hello, {name}`s World!</title>
+```
+And now {name} from the title will have the value of the name query parameter.
+# Other http methods
 Other http methods can be handled by using `@route`:
 
 For example:
