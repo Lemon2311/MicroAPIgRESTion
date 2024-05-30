@@ -69,6 +69,54 @@ def DELETE(url, *query_params):
 def PATCH(url, *query_params):
     return route(url, 'PATCH', *query_params)
 
+def html_content(html_path, css_path=None, js_path=None, params={}):
+    # Bundle HTML, CSS, and JS
+    content = bundle_html_content(html_path, css_path, js_path)
+
+    # Replace placeholders with query parameters
+    content = replace_placeholders(content, params)
+
+    return content
+
+def bundle_html_content(html_path, css_path=None, js_path=None):
+    html_content = ''
+    css_content = ''
+    js_content = ''
+
+    # Read HTML file
+    if html_path:
+        try:
+            with open(html_path, 'r') as f:
+                html_content = f.read()
+        except OSError:
+            print("Could not open/read file:", html_path)
+
+    # Read CSS file
+    if css_path:
+        try:
+            with open(css_path, 'r') as f:
+                css_content = f.read()
+        except OSError:
+            print("Could not open/read file:", css_path)
+
+    # Read JS file
+    if js_path:
+        try:
+            with open(js_path, 'r') as f:
+                js_content = f.read()
+        except OSError:
+            print("Could not open/read file:", js_path)
+
+    # Combine HTML, CSS, JS
+    content = f"<style>{css_content}</style>\n{html_content}\n<script>{js_content}</script>"
+
+    return content
+
+def replace_placeholders(content, params):
+    for key, value in params.items():
+        content = content.replace('{' + key + '}', str(value))
+    return content
+
 # Dispatch incoming HTTP requests to the appropriate handler
 async def dispatch_request(reader, writer):
     print('Received request from:', writer.get_extra_info('peername'))

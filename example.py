@@ -59,6 +59,10 @@ async def index_handler(name):
 </html>
 """
 
+@GET('/index0', 'name')
+async def handler(name):
+    return html_content('index.html', 'style.css', 'script.js', params={'name': name})
+
 @route('/hello')
 async def greet_handler():
     return 'Hello!'

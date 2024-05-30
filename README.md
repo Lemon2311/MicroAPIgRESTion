@@ -74,6 +74,12 @@ async def index_handler(name):
 </html>
 """
 ```
+or
+```python
+@GET('/index0', 'name')
+async def handler(name):
+    return html_content('index.html', 'style.css', 'script.js', params={'name': name})
+```
 
 Other http methods can be handled by using `@route`:
 
