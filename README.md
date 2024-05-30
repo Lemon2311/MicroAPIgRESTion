@@ -54,6 +54,27 @@ You can also use the `@GET`, `@POST`, `@PUT`, `@DELETE`, `@PATCH` decorators for
 async def nips_handler(email, nrOfNips):
     return f'{email}, {nrOfNips}'
 ```
+Webpages can be served, while passing query parameters like so:
+```python
+@GET('/index', 'name')
+async def index_handler(name):
+    return f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello, {name}`s World!</title>
+</head>
+<body>
+    <h1 id="greeting">Loading...</h1>
+
+    <script>
+        document.getElementById('greeting').textContent = 'Hello, {name}`s World!';
+    </script>
+</body>
+</html>
+"""
+```
+
 Other http methods can be handled by using `@route`:
 
 For example:
