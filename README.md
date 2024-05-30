@@ -14,6 +14,7 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 - [Routing](#routing)
 - [Webpage Serving](#webpage-serving)
 - [Handling other http methods](#handling-other-http-methods)
+- [Starting the server](#starting-the-server)
 - [A more comprehensive example](#a-more-comprehensive-example)
 
 ## Network setup
@@ -116,8 +117,8 @@ async def options_handler():
 This will handle requests made with the method `OPTIONS` at `http://(device-ip)/options`.
 `(device-ip)` is a placeholder for the actual ip of the device which is being output in serial when the device connects to WI-Fi.
 
+## Starting the server
 After route handlers have been defined, running 
-
 ```python
 asyncio.run(main())
 ```
