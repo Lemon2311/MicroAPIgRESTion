@@ -9,7 +9,13 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 - WiFi connection management
 
 # Usage
-## Network connection
+- [Network setup](#network-setup)
+- [Routing](#routing)
+- [Webpage Serving](#webpage-serving)
+- [Handling other http methods](#handling-other-http-methods)
+- [A more comprehensive example](#a-more-comprehensive-example)
+
+## Network setup
 To get started, save `MicroAPIgRESTion.py` onto the device and create a `WIFI_CREDENTIALS.py` file following the pattern/structure from `WIFI_CREDENTIALS(example).py`, then save it on the device.
 ```
 WIFI_CREDENTIALS.py
@@ -115,18 +121,22 @@ asyncio.run(main())
 ```
 will start the Async Rest Api, being able to handle requests at routes defined previously.
 
-## A more comprehensive example of use would be:
+## A more comprehensive example
 ```
 example.py
 ```
 ```python
+# import lib
 from MicroAPIgRESTion import *
+# importing Pin for use in future handler
 from machine import Pin
 
+# basic example
 @GET('/nips', 'email', 'nrOfNips')
 async def nips_handler(email, nrOfNips):
     return f'{email}, {nrOfNips}'
 
+# using device pins
 @POST('/initializeDigitalPin', 'pin', 'mode')
 async def digitalPin_init_handler(pin, mode):
     
@@ -155,9 +165,10 @@ async def digitalPin_out_handler(pin, state):
     
     return f"Pin nr.{pin} set to {state}"
 
-@route('/hello', 'GET', 'name')
-async def hello_handler(name):
-    return f'Hello, {name}!'
+# HTML website serving
+@GET('/index0', 'name')
+async def handler(name):
+    return html_content('index.html', params={'name': name})
 
 @GET('/index', 'name')
 async def index_handler(name):
@@ -177,18 +188,21 @@ async def index_handler(name):
 </html>
 """
 
-@GET('/index0', 'name')
-async def handler(name):
-    return html_content('index.html', params={'name': name})
+# different handlers based on query parameters
+@route('/hello', 'GET', 'name')
+async def hello_handler(name):
+    return f'Hello, {name}!'
 
 @route('/hello')
 async def greet_handler():
     return 'Hello!'
 
+# other http methods handling
 @route('/options', 'OPTIONS')
 async def options_handler():
     return 'Do some options or smthn'
 
+# Running server
 asyncio.run(main())
 ```
 ## Contributions are welcome!</h2>
