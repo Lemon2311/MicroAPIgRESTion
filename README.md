@@ -81,7 +81,7 @@ async def index_handler(name):
 </html>
 """
 ```
-Or by using a separate html file by, returning the html_content function and passing as arguments the path of the html file and the query parameters like so:
+Or by using a separate html file by, returning the html_content function and passing as arguments the absolute path of the html file and the query parameters like so:
 ```python
 @GET('/index0', 'name')
 async def handler(name):
@@ -96,6 +96,7 @@ async def handler(name):
     <script src="script.js"></script>
 </head>
 ```
+*notes for noobs: html, css, js files should be saved on the micropython device*
  - query parameters can be used by using {param} inside any of the html, css, js files like so:
 ```html
 <title>Hello, {name}`s World!</title>
