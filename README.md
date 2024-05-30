@@ -33,6 +33,7 @@ You can define a simple route handler as follows:
 async def greet_handler():
     return 'Hello!'
 ```
+Whatever the handler function returns will be the response of the request.
 
 The `@route` decorator accepts three attributes: `url`, `method`, and `queryParams`. 
 
