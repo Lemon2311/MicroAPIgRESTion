@@ -2,15 +2,14 @@
 
 MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async Restful APIs in MicroPython for use on microcontrollers. It streamlines the process of defining routes and handlers for various HTTP methods and query parameters. Initially crafted for the Raspberry Pi Pico W due to its lightweight nature.
 
-## Features
-
+# Features
 - Route definition simplified with decorators
 - Support for all HTTP methods, with explicit support for `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`
 - Automatic parsing of query parameters
 - WiFi connection management
 
-## Usage
-
+# Usage
+## Network connection
 To get started, save `MicroAPIgRESTion.py` onto the device and create a `WIFI_CREDENTIALS.py` file following the pattern/structure from `WIFI_CREDENTIALS(example).py`, then save it on the device.
 ```
 WIFI_CREDENTIALS.py
@@ -19,13 +18,14 @@ WIFI_CREDENTIALS.py
 SSID = "SSID"
 PASS = "PASS"
 ```
-Begin by importing the library:
+## Importing the library
+Then begin using by importing the library:
 
 ```python
 from MicroAPIgRESTion import *
 
 ```
-
+## Routing
 You can define a simple route handler as follows:
 
 ```python
@@ -54,6 +54,7 @@ You can also use the `@GET`, `@POST`, `@PUT`, `@DELETE`, `@PATCH` decorators for
 async def nips_handler(email, nrOfNips):
     return f'{email}, {nrOfNips}'
 ```
+## Webpage serving
 Webpages can be served, while passing query parameters like so:
 ```python
 @GET('/index', 'name')
@@ -94,8 +95,8 @@ async def handler(name):
 <title>Hello, {name}`s World!</title>
 ```
 And now {name} from the title will have the value of the name query parameter.
-# Other http methods
-Other http methods can be handled by using `@route`:
+## Handling other http methods
+Other http methods can be handled by using `@route`.
 
 For example:
 
@@ -114,7 +115,7 @@ asyncio.run(main())
 ```
 will start the Async Rest Api, being able to handle requests at routes defined previously.
 
-A more comprehensive example of use would be:
+## A more comprehensive example of use would be:
 ```
 example.py
 ```
@@ -158,10 +159,6 @@ async def digitalPin_out_handler(pin, state):
 async def hello_handler(name):
     return f'Hello, {name}!'
 
-@route('/hello', 'GET', 'first_name', 'last_name')
-async def greet_handler(first_name, last_name):
-    return f'Hello, {first_name} {last_name}!'
-
 @GET('/index', 'name')
 async def index_handler(name):
     return f"""
@@ -179,6 +176,10 @@ async def index_handler(name):
 </body>
 </html>
 """
+
+@GET('/index0', 'name')
+async def handler(name):
+    return html_content('index.html', params={'name': name})
 
 @route('/hello')
 async def greet_handler():
