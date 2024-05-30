@@ -7,6 +7,7 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 - Support for all HTTP methods, with explicit support for `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`
 - Automatic parsing of query parameters
 - WiFi connection management
+- Method & Query parameters specific route handlers
 
 # Usage
 - [Network setup](#network-setup)
