@@ -69,48 +69,87 @@ def DELETE(url, *query_params):
 def PATCH(url, *query_params):
     return route(url, 'PATCH', *query_params)
 
-def html_content(html_path, css_path=None, js_path=None, params={}):
+def html_content(html_path, params={}):
+
     # Bundle HTML, CSS, and JS
-    content = bundle_html_content(html_path, css_path, js_path)
+    content = replace_script_style_tags_with_content(html_path)
 
     # Replace placeholders with query parameters
     content = replace_placeholders(content, params)
 
     return content
 
-def bundle_html_content(html_path, css_path=None, js_path=None):
-    html_content = ''
-    css_content = ''
-    js_content = ''
+def replace_script_style_tags_with_content(html_path):
+    try:
+        with open(html_path, 'r') as f:
+            html_content = f.read()
 
-    # Read HTML file
-    if html_path:
-        try:
-            with open(html_path, 'r') as f:
-                html_content = f.read()
-        except OSError:
-            print("Could not open/read file:", html_path)
+        # Replace script tags
+        html_content = replace_script_tags(html_content)
 
-    # Read CSS file
-    if css_path:
-        try:
-            with open(css_path, 'r') as f:
-                css_content = f.read()
-        except OSError:
-            print("Could not open/read file:", css_path)
+        # Replace link tags
+        html_content = replace_link_tags(html_content)
 
-    # Read JS file
-    if js_path:
-        try:
-            with open(js_path, 'r') as f:
-                js_content = f.read()
-        except OSError:
-            print("Could not open/read file:", js_path)
+        return html_content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return html_content
 
-    # Combine HTML, CSS, JS
-    content = f"<style>{css_content}</style>\n{html_content}\n<script>{js_content}</script>"
+def replace_script_tags(html_content):
+    script_start = html_content.find('<script')
+    if script_start == -1:
+        return html_content
+    script_end = html_content.find('>', script_start)
+    if script_end == -1:
+        return html_content
+    script_content = html_content[script_start:script_end+1]
+    src_start = script_content.find('src="')
+    if src_start == -1:
+        return html_content
+    src_end = script_content.find('"', src_start + 5)
+    if src_end == -1:
+        return html_content
+    src = script_content[src_start + 5:src_end]
 
-    return content
+    # Read the content of the file specified in the src attribute
+    with open(src, 'r') as f:
+        script_file_content = f.read()
+
+    # Wrap the content of the script file in a script tag
+    script_file_content = f'<script>\n{script_file_content}\n</script>'
+
+    # Replace the script tag with the content of the file
+    html_content = html_content.replace(script_content, script_file_content)
+
+    return html_content
+
+def replace_link_tags(html_content):
+    link_start = html_content.find('<link')
+    if link_start == -1:
+        return html_content
+    link_end = html_content.find('>', link_start)
+    if link_end == -1:
+        return html_content
+    link_content = html_content[link_start:link_end+1]
+    href_start = link_content.find('href="')
+    if href_start == -1:
+        return html_content
+    href_end = link_content.find('"', href_start + 6)
+    if href_end == -1:
+        return html_content
+    href = link_content[href_start + 6:href_end]
+
+    # Read the content of the file specified in the href attribute
+    with open(href, 'r') as f:
+        css_file_content = f.read()
+
+    # Wrap the content of the CSS file in a style tag
+    css_file_content = f'<style>\n{css_file_content}\n</style>'
+
+    # Replace the link tag with the content of the file
+    html_content = html_content.replace(link_content, css_file_content)
+
+    return html_content
 
 def replace_placeholders(content, params):
     for key, value in params.items():
