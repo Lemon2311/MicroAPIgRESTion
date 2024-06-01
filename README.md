@@ -112,7 +112,8 @@ For example:
 ```python
 @route('/options', 'OPTIONS')
 async def options_handler():
-    return 'Do some options or smthn'
+    #Do some options or smthn
+    return 'Did some options!'
 ```
 This will handle requests made with the method `OPTIONS` at `http://(device-ip)/options`.
 `(device-ip)` is a placeholder for the actual ip of the device which is being output in serial when the device connects to WI-Fi.
@@ -200,10 +201,11 @@ async def hello_handler(name):
 async def greet_handler():
     return 'Hello!'
 
-# other http methods handling
+# other http methods handlingthon
 @route('/options', 'OPTIONS')
 async def options_handler():
-    return 'Do some options or smthn'
+    #Do some options or smthn
+    return 'Did some options!'
 
 # Running server
 asyncio.run(main())
