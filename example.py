@@ -69,10 +69,11 @@ async def hello_handler(name):
 async def greet_handler():
     return 'Hello!'
 
-# other http methods handling
+# other http methods handlingthon
 @route('/options', 'OPTIONS')
 async def options_handler():
-    return 'Do some options or smthn'
+    #Do some options or smthn
+    return 'Did some options!'
 
 # Running server
 asyncio.run(main())
