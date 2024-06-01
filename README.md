@@ -83,7 +83,7 @@ async def index_handler(name):
 </html>
 """
 ```
-Or by using a separate html file by, returning the html_content function and passing as arguments the relative or absolute path of the html file and the query parameters like so:
+Or using a separate html file by returning the html_content function and passing as arguments the relative or absolute path of the html file and the query parameters like so:
 ```python
 @GET('/index0', 'name')
 async def handler(name):
