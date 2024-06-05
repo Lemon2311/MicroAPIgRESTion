@@ -26,6 +26,7 @@ WIFI_CREDENTIALS.py
 SSID = "SSID"
 PASS = "PASS"
 ```
+The ip of the device is being output in serial when the device connects to WI-Fi.
 ## Importing the library
 Then begin using by importing the library:
 
