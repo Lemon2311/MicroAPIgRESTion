@@ -96,7 +96,7 @@ or
 async def handler(name):
     return html_content('index.html', params={'name': name})
 ```
-*note: this is optional as all files on the device can be accessed at http://your-ip/fileName.ext*
+*note: this is optional as all files on the device can be accessed at http://device-ip/fileName.ext*
 <br>
 <br>
 **When using the html_content function:**
@@ -133,7 +133,7 @@ After route handlers have been defined, running
 ```python
 asyncio.run(main())
 ```
-will start the Async Rest Api, being able to handle requests at routes defined previously.
+will start the Async Rest Api, being able to handle requests at routes defined previously, and get requests at http://device-ip/fileName.ext
 
 ## A more comprehensive example
 ```
