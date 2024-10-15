@@ -1,7 +1,8 @@
 import uasyncio as asyncio
 import network
 from machine import Pin
-from WIFI_CREDENTIALS import SSID, PASS
+from config import SSID, PASS
+import uos
 
 # Connect to WiFi
 def connect_wifi(ssid, password):
@@ -69,89 +70,30 @@ def DELETE(url, *query_params):
 def PATCH(url, *query_params):
     return route(url, 'PATCH', *query_params)
 
+def HTML(url, *query_params):
+    return route(url, 'GET', *query_params)
+
 def html_content(html_path, params={}):
 
     # Bundle HTML, CSS, and JS
-    content = replace_script_style_tags_with_content(html_path)
+    content = fileContents(html_path)
 
     # Replace placeholders with query parameters
-    content = replace_placeholders(content, params)
+    content = replace_querryParamsWithValues(content, params)
 
     return content
 
-def replace_script_style_tags_with_content(html_path):
+def fileContents(html_path):
     try:
         with open(html_path, 'r') as f:
             html_content = f.read()
-
-        # Replace script tags
-        html_content = replace_script_tags(html_content)
-
-        # Replace link tags
-        html_content = replace_link_tags(html_content)
 
         return html_content
     except Exception as e:
         print(f"An error occurred: {e}")
         return html_content
 
-def replace_script_tags(html_content):
-    script_start = html_content.find('<script')
-    if script_start == -1:
-        return html_content
-    script_end = html_content.find('>', script_start)
-    if script_end == -1:
-        return html_content
-    script_content = html_content[script_start:script_end+1]
-    src_start = script_content.find('src="')
-    if src_start == -1:
-        return html_content
-    src_end = script_content.find('"', src_start + 5)
-    if src_end == -1:
-        return html_content
-    src = script_content[src_start + 5:src_end]
-
-    # Read the content of the file specified in the src attribute
-    with open(src, 'r') as f:
-        script_file_content = f.read()
-
-    # Wrap the content of the script file in a script tag
-    script_file_content = f'<script>\n{script_file_content}\n</script>'
-
-    # Replace the script tag with the content of the file
-    html_content = html_content.replace(script_content, script_file_content)
-
-    return html_content
-
-def replace_link_tags(html_content):
-    link_start = html_content.find('<link')
-    if link_start == -1:
-        return html_content
-    link_end = html_content.find('>', link_start)
-    if link_end == -1:
-        return html_content
-    link_content = html_content[link_start:link_end+1]
-    href_start = link_content.find('href="')
-    if href_start == -1:
-        return html_content
-    href_end = link_content.find('"', href_start + 6)
-    if href_end == -1:
-        return html_content
-    href = link_content[href_start + 6:href_end]
-
-    # Read the content of the file specified in the href attribute
-    with open(href, 'r') as f:
-        css_file_content = f.read()
-
-    # Wrap the content of the CSS file in a style tag
-    css_file_content = f'<style>\n{css_file_content}\n</style>'
-
-    # Replace the link tag with the content of the file
-    html_content = html_content.replace(link_content, css_file_content)
-
-    return html_content
-
-def replace_placeholders(content, params):
+def replace_querryParamsWithValues(content, params):
     for key, value in params.items():
         content = content.replace('{' + key + '}', str(value))
     return content
@@ -190,8 +132,20 @@ async def dispatch_request(reader, writer):
     await writer.awrite(response)
     await writer.aclose()
 
+def register_file_routes():
+    for filename in uos.listdir('/'):
+        # Dynamically create a handler for each file
+        async def file_handler(filename=filename):
+            return html_content(filename)
+        
+        # Register the route with the GET method for each file
+        GET(f'/{filename}')(file_handler)
+
 # Start the async REST API server
 async def main():
+
+    register_file_routes()
+
     # Connect to WiFi
     connect_wifi(SSID, PASS)
     

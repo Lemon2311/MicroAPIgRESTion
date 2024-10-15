@@ -37,24 +37,23 @@ async def digitalPin_out_handler(pin, state):
     
     return f"Pin nr.{pin} set to {state}"
 
-# HTML website serving
-@GET('/index0', 'name')
-async def handler(name):
-    return html_content('index.html', params={'name': name})
+@HTML('/')
+async def index_handler():
+    return html_content('index.html')
 
-@GET('/index', 'name')
-async def index_handler(name):
+@GET('/index0')
+async def index0_handler():
     return f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello, {name}`s World!</title>
+    <title>Hello, name`s World!</title>
 </head>
 <body>
     <h1 id="greeting">Loading...</h1>
 
     <script>
-        document.getElementById('greeting').textContent = 'Hello, {name}`s World!';
+        document.getElementById('greeting').textContent = 'Hello, name`s World!';
     </script>
 </body>
 </html>
