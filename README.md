@@ -18,9 +18,9 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 - [A more comprehensive example](#a-more-comprehensive-example)
 
 ## Network setup
-To get started, save `MicroAPIgRESTion.py` onto the device and insert your wifi credential into the file `config.py`, following the pattern below, then save it on the device.
+To get started, save `MicroAPIgRESTion.py` onto the device, save a file named `config.py` on the device and insert your wifi credential into the file `config.py`, following the pattern below from `config(example).py`, then save it on the device.
 ```
-config.py
+config(example).py
 ```
 ```python
 SSID = "SSID" # Your wifi SSID
