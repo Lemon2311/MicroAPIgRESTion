@@ -14,7 +14,7 @@ async def greet_handler():
 # connect to network with DHCP
 connect_wifi('YOUR-SSID', 'YOUR-PASS')
 
-# start server
+# start server listening on all predefined handlers
 asyncio.run(main())
 
 ```
