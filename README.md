@@ -190,10 +190,10 @@ asyncio.run(main())
 ```
 will start the Async Rest Api, being able to handle requests at routes defined previously, and get requests at http://device-ip/fileName.ext
 
-## A more comprehensive example
-```
-example.py
-```
+# A more comprehensive example
+
+## *[Found on example branch](https://github.com/Lemon2311/MicroAPIgRESTion/tree/example)*
+
 ```python
 # import lib
 from MicroAPIgRESTion import *
