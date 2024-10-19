@@ -181,6 +181,7 @@ if not wlan.isconnected():
 # Print the network configuration, containing device ip
 print('Connected to WiFi:', wlan.ifconfig())
 ```
+*note: can be useful for custom network setups &/or creating your own network*
 
 - ## Actually starting the server
 
