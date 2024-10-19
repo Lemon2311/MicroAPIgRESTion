@@ -1,11 +1,10 @@
 import uasyncio as asyncio
 import network
 from machine import Pin
-from config import SSID, PASS
 import uos
 
 # Connect to WiFi
-def connect_wifi(ssid, password):
+def connect_wifi(ssid, password, ip=None):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     if not wlan.isconnected():
@@ -13,6 +12,11 @@ def connect_wifi(ssid, password):
         wlan.connect(ssid, password)
         while not wlan.isconnected():
             pass
+    if ip:
+        # Get the current network configuration
+        current_config = wlan.ifconfig()
+        # Set the static IP, keeping the current subnet, gateway, and DNS
+        wlan.ifconfig((ip, current_config[1], current_config[2], current_config[3]))
     print('Connected to WiFi:', wlan.ifconfig())
 
 # Dictionary to store URL handlers
@@ -145,9 +149,6 @@ def register_file_routes():
 async def main():
 
     register_file_routes()
-
-    # Connect to WiFi
-    connect_wifi(SSID, PASS)
     
     # Start server
     server = await asyncio.start_server(dispatch_request, '0.0.0.0', 80)

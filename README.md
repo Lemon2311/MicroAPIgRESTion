@@ -2,6 +2,23 @@
 
 MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async Restful APIs in MicroPython for use on microcontrollers. It streamlines the process of defining routes and handlers for various HTTP methods and query parameters. Initially crafted for the Raspberry Pi Pico W due to its lightweight nature, MicroAPIgRESTion can also serve webpages.
 
+# Example
+```python
+from MicroAPIgRESTion import *
+
+# Get request at http://device-ip/hello
+@route('/hello')
+async def greet_handler():
+    return 'Hello!' # will return 'Hello!'
+
+# connect to network with DHCP
+connect_wifi('YOUR-SSID', 'YOUR-PASS')
+
+# start server
+asyncio.run(main())
+
+```
+
 # Features
 - Route definition simplified with decorators
 - Support for all HTTP methods, with explicit support for `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`
@@ -10,29 +27,18 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 - Method & Query parameters specific route handlers
 
 # Usage
-- [Network setup](#network-setup)
 - [Routing](#routing)
 - [Webpage Serving](#webpage-serving)
 - [Handling other http methods](#handling-other-http-methods)
 - [Starting the server](#starting-the-server)
+    - [Network setup](#network-setup)
+    - [Actually starting the server](#actually-starting-the-server)
 - [A more comprehensive example](#a-more-comprehensive-example)
 
-## Network setup
-To get started, save `MicroAPIgRESTion.py` onto the device, save a file named `config.py` on the device and insert your wifi credential into the file `config.py`, following the pattern below from `config(example).py`, then save it on the device.
-```
-config(example).py
-```
-```python
-SSID = "SSID" # Your wifi SSID
-PASS = "PASS" # Your wifi PASSWORD
-```
-The ip of the device is being output in serial when the device connects to WI-Fi.
 ## Importing the library
-Then begin using by importing the library:
-
+The library is the MicroAPIgRESTion.py file, so
 ```python
 from MicroAPIgRESTion import *
-
 ```
 ## Routing
 You can define a simple route handler as follows:
@@ -129,7 +135,54 @@ This will handle requests made with the method `OPTIONS` at `http://(device-ip)/
 `(device-ip)` is a placeholder for the actual ip of the device which is being output in serial when the device connects to WI-Fi.
 
 ## Starting the server
-After route handlers have been defined, running 
+
+- ## Network setup
+Prefered way is by saving a file named config.py containing
+```python
+# config.py
+SSID = "SSID" # Your wifi SSID
+PASS = "PASS" # Your wifi PASSWORD
+```
+And importing the network credentials in your main.py
+```python
+from config import SSID, PASS
+```
+After that the `connect_wifi()` function can be used to either
+```python
+# Connect to network with DHCP
+connect_wifi(SSID, PASS)
+```
+or
+```python
+# Connect to network with static IP
+connect_wifi(SSID, PASS, ip="192.168.1.100")
+```
+*note: The ip of the device is being output in serial when the device connects to WI-Fi when using `connect_wifi()`.*
+
+Another prefered way is by doing your own thing like
+```python
+
+SSID = "YOUR-SSID"
+PASS = "YOUR-PASS"
+
+# Initialize the WLAN interface
+wlan = network.WLAN(network.STA_IF)
+wlan.active(True)
+
+# Connect to the WiFi network
+if not wlan.isconnected():
+    print('Connecting to WiFi...')
+    wlan.connect(SSID, PASS)
+    while not wlan.isconnected():
+        pass
+
+# Print the network configuration, containing device ip
+print('Connected to WiFi:', wlan.ifconfig())
+```
+
+- ## Actually starting the server
+
+After route handlers have been defined & a network connection has been established, running 
 ```python
 asyncio.run(main())
 ```

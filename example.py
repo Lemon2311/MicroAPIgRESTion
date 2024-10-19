@@ -2,6 +2,7 @@
 from MicroAPIgRESTion import *
 # importing Pin for use in future handler
 from machine import Pin
+from config import SSID, PASS
 
 # basic example
 @GET('/nips', 'email', 'nrOfNips')
@@ -73,6 +74,10 @@ async def greet_handler():
 async def options_handler():
     #Do some options or smthn
     return 'Did some options!'
+
+
+# Example usage with DHCP
+connect_wifi(SSID, PASS)
 
 # Running server
 asyncio.run(main())
