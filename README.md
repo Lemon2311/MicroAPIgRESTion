@@ -28,6 +28,7 @@ asyncio.run(main())
 - Method & Query parameters specific route handlers
 
 # Usage
+- [Getting Started](#getting-started)
 - [Routing](#routing)
 - [Webpage Serving](#webpage-serving)
 - [Handling other http methods](#handling-other-http-methods)
@@ -36,7 +37,7 @@ asyncio.run(main())
     - [Actually starting the server](#actually-starting-the-server)
 - [A more comprehensive example](#a-more-comprehensive-example)
 
-## Importing the library
+## Getting Started
 The library is the MicroAPIgRESTion.py file, so
 ```python
 from MicroAPIgRESTion import *
