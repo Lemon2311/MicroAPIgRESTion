@@ -20,7 +20,7 @@ asyncio.run(main())
 ```
 
 # Features
-- Route definition simplified with decorators
+- Route handling simplified with decorators
 - Webserver
 - Support for all HTTP methods, with explicit support for `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`
 - Automatic parsing of query parameters
