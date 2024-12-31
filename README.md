@@ -1,3 +1,7 @@
+
+<img src="https://github.com/user-attachments/assets/d58bb4b5-29bd-4bc1-984f-80bfcb1c5cda" alt="MICROAPIGRESTION" style="display:block; margin-left:auto; margin-right:auto;" />
+
+
 # MicroAPIgRESTion
 
 MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async Restful APIs in MicroPython for use on microcontrollers. It streamlines the process of defining routes and handlers for various HTTP methods and query parameters. Initially crafted for the Raspberry Pi Pico W due to its lightweight nature, MicroAPIgRESTion can also serve webpages.
