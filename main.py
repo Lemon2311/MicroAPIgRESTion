@@ -1,83 +1,27 @@
-# import lib
+import RUN
+from RUN import *
 from MicroAPIgRESTion import *
-# importing Pin for use in future handler
-from machine import Pin
-from config import SSID, PASS
-
-# basic example
-@GET('/nips', 'email', 'nrOfNips')
-async def nips_handler(email, nrOfNips):
-    return f'{email}, {nrOfNips}'
-
-# using device pins
-@POST('/initializeDigitalPin', 'pin', 'mode')
-async def digitalPin_init_handler(pin, mode):
-    
-    pin = int(pin)
-    
-    if mode == 'input':
-        Pin(pin, Pin.IN)
-    elif mode == 'output':
-        Pin(pin, Pin.OUT)
-    else:
-        return "Invalid"
-    
-    return f"Digital pin nr.{pin} initialized as {mode}"
-
-@POST('/digitalOutput', 'pin', 'state')
-async def digitalPin_out_handler(pin, state):
-    
-    pin = int(pin)
-    
-    if state == 'high':
-        Pin(pin).value(1)
-    elif state == 'low':
-        Pin(pin).value(0)
-    else:
-        return "Invalid"
-    
-    return f"Pin nr.{pin} set to {state}"
-
-@HTML('/')
-async def index_handler():
-    return html_content('index.html')
-
-@GET('/index0')
-async def index0_handler():
-    return f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hello, name`s World!</title>
-</head>
-<body>
-    <h1 id="greeting">Loading...</h1>
-
-    <script>
-        document.getElementById('greeting').textContent = 'Hello, name`s World!';
-    </script>
-</body>
-</html>
-"""
-
-# different handlers based on query parameters
-@route('/hello', 'GET', 'name')
-async def hello_handler(name):
-    return f'Hello, {name}!'
-
-@route('/hello')
-async def greet_handler():
-    return 'Hello!'
-
-# other http methods handlingthon
-@route('/options', 'OPTIONS')
-async def options_handler():
-    #Do some options or smthn
-    return 'Did some options!'
+from wifi_credentials import *
 
 
-# Example usage with DHCP
-connect_wifi(SSID, PASS)
+#Defineing routes for changing device files so that conecting device via usb isn`t required anymore
+@GET('/file','filename')
+async def code_return_handler(filename):
+    with open(filename, 'r') as file:
+        content = file.read()
+    return content
 
-# Running server
-asyncio.run(main())
+
+@POST('/file','filename','value')
+async def code_set_handler(filename,value):
+    with open(filename, 'w') as file:
+        content = file.write(value)
+    return content
+
+
+# Wi-Fi connection
+connect_wifi(SSID, PASS, ip="192.168.1.111")
+
+# Run the asyncio event loop serving routes on all files defined in main.py and in RUN.py
+# and running the device loop and Interupt for the toggle switch via function imported from RUN.py
+asyncio.run(start_with_background_task())

@@ -3,13 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Changer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Toggle Switches</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        button {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            margin: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h1>Change the Background Color</h1>
-    <button onclick="changeColor()">Change Color</button>
+    <div class="container">
+        <h1>Control Switches</h1>
+        <button onclick="toggleSwitch(0)">Toggle Switch 0</button>
+        <button onclick="toggleSwitch(1)">Toggle Switch 1</button>
+        <div class="status" id="status">Status: Waiting for action...</div>
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        function toggleSwitch(switchNumber) {
+            const statusDiv = document.getElementById('status');
+            const url = `/${switchNumber}`; // Relative URL for the route
+
+            fetch(url, {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusDiv.textContent = `Status: Switch ${switchNumber} toggled successfully!`;
+                } else {
+                    statusDiv.textContent = `Status: Failed to toggle Switch ${switchNumber}.`;
+                }
+            })
+            .catch(error => {
+                statusDiv.textContent = `Status: Error toggling Switch ${switchNumber}.`;
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>
