@@ -41,14 +41,14 @@ def route(url, method='GET', *query_params):
                 # Call the handler function with query parameters
                 response = await handler(**query_params_dict)
             else:
-                # Send a 400 response if required query parameters are missing
-                response = 'HTTP/1.0 400 Bad Request\r\nContent-Type: text/html\r\nAccess-Control-Allow-Origin: *\r\n\r\nMissing query parameters\r\n'
+                # Send a 400 response if required query parameters are missing/Content-Type: text/html
+                response = 'HTTP/1.0 400 Bad Request\r\n \r\nAccess-Control-Allow-Origin: *\r\n\r\nMissing query parameters\r\n'
                 await writer.awrite(response.encode())
                 await writer.aclose()
                 return
 
-            # Write the response
-            response = f'HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nAccess-Control-Allow-Origin: *\r\n\r\n{response}\r\n'
+            # Write the response/Content-Type: text/html
+            response = f'HTTP/1.0 200 OK\r\n \r\nAccess-Control-Allow-Origin: *\r\n\r\n{response}\r\n'
             await writer.awrite(response.encode())
 
             # Close the connection
