@@ -77,6 +77,8 @@ async def nips_handler(email, nrOfNips):
 ```
 ## Webpage serving
 Webpages can be served, while passing query parameters like so:
+
+*note: The querry parameters need to always be present for the routing to recognise to call this handler using this method!*
 ```python
 @GET('/index', 'name')
 async def index_handler(name):
@@ -96,17 +98,17 @@ async def index_handler(name):
 </html>
 """
 ```
-Or using a separate html file by returning the html_content function and passing as arguments the relative or absolute path of the html file and the query parameters like so:
+Or using a separate html file by returning the relative or absolute path of the html file like so:
 ```python
-@HTML('/index0', 'name')
-async def handler(name):
-    return html_content('index.html', params={'name': name})
+@HTML('/index')
+async def handler():
+    return 'index.html'
 ```
 or
 ```python
-@GET('/index0', 'name')
-async def handler(name):
-    return html_content('index.html', params={'name': name})
+@GET('/index')
+async def handler():
+    return html_content('index.html')
 ```
 *note: this is optional as all files on the device can be accessed at http://device-ip/fileName.ext*
 <br>

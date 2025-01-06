@@ -75,7 +75,21 @@ def PATCH(url, *query_params):
     return route(url, 'PATCH', *query_params)
 
 def HTML(url, *query_params):
-    return route(url, 'GET', *query_params)
+    def decorator(func):
+        # Wrap the handler with additional logic
+        async def wrapper(*args, **kwargs):
+            result = await func(*args, **kwargs)
+
+            # Automatically process strings ending in ".html"
+            if isinstance(result, str) and result.endswith(".html"):
+                return html_content(result)
+            
+            # Return original result if no processing is needed
+            return result
+
+        # Register the route
+        return route(url, 'GET', *query_params)(wrapper)
+    return decorator
 
 def html_content(html_path, params={}):
 
