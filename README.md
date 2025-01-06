@@ -10,7 +10,7 @@ MicroAPIgRESTion is a lightweight, intuitive library tailored for building Async
 ```python
 from MicroAPIgRESTion import *
 
-# Get request at http://device-ip/hello
+# Get request at http://(device-ip)/hello
 @route('/hello')
 async def greet_handler():
     return 'Hello!' # will return 'Hello!'
@@ -42,6 +42,8 @@ asyncio.run(main())
 - [A more comprehensive example](#a-more-comprehensive-example)
 
 ## Getting Started
+*Appendix: When in a url there is a string in braces, that is a placeholder. So in http://(device-ip)/(fileName.ext), (device-ip) is the actual device ip and (fileName.txt) is the actual name of the file.*<br>
+## Actually getting started
 The library is the MicroAPIgRESTion.py file, so
 ```python
 from MicroAPIgRESTion import *
@@ -108,7 +110,7 @@ or
 async def handler(name):
     return html_content('index.html', params={'name': name})
 ```
-*note: this is optional as all files on the device can be accessed at http://device-ip/fileName.ext*
+*note: this is optional as all files on the device can be accessed at http://(device-ip)/(fileName.ext)*
 <br>
 <br>
 **When using the html_content function:**
@@ -193,96 +195,68 @@ After route handlers have been defined & a network connection has been establish
 ```python
 asyncio.run(main())
 ```
-will start the Async Rest Api, being able to handle requests at routes defined previously, and get requests at http://device-ip/fileName.ext
+will start the Async Rest Api, being able to handle requests at routes defined previously, and get requests at http://(device-ip)/(fileName.ext)
 
 # A more comprehensive example
 
 ## *[Found on example branch](https://github.com/Lemon2311/MicroAPIgRESTion/tree/example)*
 
 ```python
-# import lib
 from MicroAPIgRESTion import *
-# importing Pin for use in future handler
-from machine import Pin
-from config import SSID, PASS
+from wifi_credentials import *
 
-# basic example
-@GET('/nips', 'email', 'nrOfNips')
-async def nips_handler(email, nrOfNips):
-    return f'{email}, {nrOfNips}'
+import machine
+import time
 
-# using device pins
-@POST('/initializeDigitalPin', 'pin', 'mode')
-async def digitalPin_init_handler(pin, mode):
-    
-    pin = int(pin)
-    
-    if mode == 'input':
-        Pin(pin, Pin.IN)
-    elif mode == 'output':
-        Pin(pin, Pin.OUT)
-    else:
-        return "Invalid"
-    
-    return f"Digital pin nr.{pin} initialized as {mode}"
+# led0 simultaniously handling from route and toggle switch using interupt
+led0 = machine.Pin(7, machine.Pin.OUT)
+pin0 = Pin(0, Pin.IN, Pin.PULL_DOWN)
 
-@POST('/digitalOutput', 'pin', 'state')
-async def digitalPin_out_handler(pin, state):
+def handle_interrupt0(pin):
+    led0.toggle()
     
-    pin = int(pin)
-    
-    if state == 'high':
-        Pin(pin).value(1)
-    elif state == 'low':
-        Pin(pin).value(0)
-    else:
-        return "Invalid"
-    
-    return f"Pin nr.{pin} set to {state}"
+# Set up interrupt to call handle_interrupt on a rising/falling edge
+pin0.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=handle_interrupt0)
 
-@HTML('/')
-async def index_handler():
+# Async HTTP handler function
+@route('/0')
+async def greet_handler0():
+    led0.toggle()  # Change the state of the pin
+    return '0'
+
+
+# simultaneously running loop changing led1 state every 5 seconds
+# while having route for changing led value at any time
+led1 = machine.Pin(3, machine.Pin.OUT)
+
+# Define an asynchronous loop function
+async def constant_loop():
+    while True:
+        led1.toggle()
+        await asyncio.sleep(5)
+
+# Create a task for the constant loop before starting the main event loop
+async def start_with_background_task():
+    asyncio.create_task(constant_loop())  # Schedule the constant loop
+    await main()  # Call the existing main() function from MicroAPIgRESTion
+
+@GET('/1')
+async def greet_handler1():
+    led1.toggle()  # Change the state of the pin
+    return '1'
+
+# website serving acting as ui for led switches
+@HTML('/index')
+async def handler():
     return html_content('index.html')
 
-@GET('/index0')
-async def index0_handler():
-    return f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hello, name`s World!</title>
-</head>
-<body>
-    <h1 id="greeting">Loading...</h1>
+# Wi-Fi connection
+connect_wifi(SSID, PASS, ip="192.168.1.111")
 
-    <script>
-        document.getElementById('greeting').textContent = 'Hello, name`s World!';
-    </script>
-</body>
-</html>
-"""
+# Run the asyncio event loop serving all routes defined in main.py
+# and run the device loop and Interupt for the toggle switch via self defined function
+asyncio.run(start_with_background_task())
 
-# different handlers based on query parameters
-@route('/hello', 'GET', 'name')
-async def hello_handler(name):
-    return f'Hello, {name}!'
-
-@route('/hello')
-async def greet_handler():
-    return 'Hello!'
-
-# other http methods handlingthon
-@route('/options', 'OPTIONS')
-async def options_handler():
-    #Do some options or smthn
-    return 'Did some options!'
-
-
-# Example usage with DHCP
-connect_wifi(SSID, PASS)
-
-# Running server
-asyncio.run(main())
 ```
 ## Contributions are welcome!</h2>
 
