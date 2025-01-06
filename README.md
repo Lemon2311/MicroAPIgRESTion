@@ -42,7 +42,7 @@ asyncio.run(main())
 - [A more comprehensive example](#a-more-comprehensive-example)
 
 ## Getting Started
-*Appendix: When in a url there is a string in braces, that is a placeholder. So in http://(device-ip)/(fileName.ext), (device-ip) is the actual device ip and (fileName.txt) is the actual name of the file.*<br>
+- *Appendix: When in a url there is a string in braces, that is a placeholder. So in http://(device-ip)/(fileName.ext), (device-ip) is the actual device ip and (fileName.txt) is the actual name of the file.*<br>
 ## Actually getting started
 The library is the MicroAPIgRESTion.py file, so
 ```python
