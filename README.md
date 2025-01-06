@@ -195,7 +195,10 @@ After route handlers have been defined & a network connection has been establish
 ```python
 asyncio.run(main())
 ```
-will start the Async Rest Api, being able to handle requests at routes defined previously, and get requests at http://(device-ip)/(fileName.ext)
+will start the Async Rest Api, being able to handle:
+- *requests at routes defined previously*
+- *get requests at http://(device-ip)/(fileName.ext)*
+<br>
 
 # A more comprehensive example
 
