@@ -106,11 +106,11 @@ Or using a separate html file by returning the relative or absolute path of the 
 async def handler():
     return 'index.html'
 ```
-or
+Or to use a separate file and also automatically parse querry params
 ```python
-@GET('/index')
-async def handler():
-    return html_content('index.html')
+@GET('/index','name')
+async def index_handler(name):
+    return html_content('index.html',params={'name':name})
 ```
 *note: this is optional as all files on the device can be accessed at http://(device-ip)/(fileName.ext)*
 <br>
