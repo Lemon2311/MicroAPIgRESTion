@@ -78,9 +78,9 @@ async def nips_handler(email, nrOfNips):
     return f'{email}, {nrOfNips}'
 ```
 ## Webpage serving
-Webpages can be served, while passing query parameters like so:
+*note: The querry parameters need to always be present for the routing to recognise to call this handler using the methods shown below. The `@HTML` will be modified to handle all request with all querry params via the same handle as the query params should be handled in js!*
 
-*note: The querry parameters need to always be present for the routing to recognise to call this handler using these methods. The `@HTML` will be modified to handle all request with all querry params via the same handle as the query params should be handled in js!*
+Webpages can be served, while passing query parameters like so:
 ```python
 @GET('/index', 'name')
 async def index_handler(name):
