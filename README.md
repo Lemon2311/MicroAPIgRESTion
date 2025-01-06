@@ -253,7 +253,7 @@ async def greet_handler1():
 # website serving acting as ui for led switches
 @HTML('/index')
 async def handler():
-    return html_content('index.html')
+    return 'index.html'
 
 # Wi-Fi connection
 connect_wifi(SSID, PASS, ip="192.168.1.111")
