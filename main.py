@@ -4,7 +4,7 @@ from MicroAPIgRESTion import *
 from wifi_credentials import *
 
 
-#Defineing routes for changing device files so that conecting device via usb isn`t required anymore
+#Defineing routes for changing device files so that connecting device via usb isn`t required anymore
 @GET('/file','filename')
 async def code_return_handler(filename):
     with open(filename, 'r') as file:
